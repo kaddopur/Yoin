@@ -23,7 +23,7 @@ public class YoinActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		Parse.initialize(this, "0wvSw382QmOSDfFfLY9cjEwzjdCD0BkdWn8bus6j", "dlOrxUpPqPVALHFkwq2ys5QdROp63SDAQim7BISU");
-		PushService.subscribe(this, "", YoinActivity.class);
+		PushService.subscribe(this, "", YoinActivity.class, R.drawable.noticon);
 
 		jsonString = getJSONFromURL("http://yoinadegle.appspot.com/get_videos?order=view");
 		Log.e("123", jsonString);

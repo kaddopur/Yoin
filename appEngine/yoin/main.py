@@ -73,20 +73,25 @@ class InsertUrl(webapp.RequestHandler):
             new_video.tag = video_tag
             new_video.put()
             
-            send_notification()
+            self.send_notification(new_video.title)
             self.redirect('/?status=ok')
         else:
             self.redirect('/?status=exist')
             
-    def send_notification(self):
-        pass
-        '''
-        hey = 
+            
+    def send_notification(self, video_title):
+        json_data = {}
+        json_data['key'] = 'SPf3JHVLyR4rxOvJCcBQ48Gx52ZaLaMt9qPDGLN0'
+        json_data['channel'] = ''
+        json_data['type'] = 'android'
+        json_data['data'] = {'title': 'There is a new clip', 'alert': video_title}
+        json_string = simplejson.dumps(json_data)
+        
         req = urllib2.Request(url='https://api.parse.com/1/push',
-                              data=)
+                              data=json_string)
         req.add_header('Content-Type', 'application/json')
         r = urllib2.urlopen(req)
-        '''
+        
 
     def refresh(self):
         videos = Video.all().fetch(1000)
@@ -140,6 +145,7 @@ class InsertUrl(webapp.RequestHandler):
                 since =  datetime.date(int(since_str[2]), month[since_str[0]], int(since_str[1][:-1]))
     
             return title, uploader, view, since, result.status_code
+            
 
 class GetVideos(webapp.RequestHandler):
     def get(self):
