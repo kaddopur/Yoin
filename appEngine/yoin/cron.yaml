@@ -1,0 +1,5 @@
+cron:
+- description: refresh
+  url: /insert_url?refresh=true
+  schedule: every 30 minutes
+
