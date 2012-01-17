@@ -43,6 +43,7 @@ class InsertUrl(webapp.RequestHandler):
     def get(self):
          
         video_url = self.request.get('video_url')
+        video_tag = self.request.get('video_tag')
         refresh = self.request.get('refresh')
         
         #refresh
@@ -68,8 +69,9 @@ class InsertUrl(webapp.RequestHandler):
 
             new_video.good = 0
             new_video.bad = 0
+            new_video.tag = video_tag
             new_video.put()
-            
+            print '"' + video_tag + '"'
             self.redirect('/?status=ok')
         else:
             self.redirect('/?status=exist')
