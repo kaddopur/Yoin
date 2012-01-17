@@ -27,6 +27,7 @@ import os
 import simplejson
 from dbmodel import *
 import sys
+import urllib2
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -71,10 +72,21 @@ class InsertUrl(webapp.RequestHandler):
             new_video.bad = 0
             new_video.tag = video_tag
             new_video.put()
-            print '"' + video_tag + '"'
+            
+            send_notification()
             self.redirect('/?status=ok')
         else:
             self.redirect('/?status=exist')
+            
+    def send_notification(self):
+        pass
+        '''
+        hey = 
+        req = urllib2.Request(url='https://api.parse.com/1/push',
+                              data=)
+        req.add_header('Content-Type', 'application/json')
+        r = urllib2.urlopen(req)
+        '''
 
     def refresh(self):
         videos = Video.all().fetch(1000)

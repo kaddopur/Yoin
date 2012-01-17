@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.parse.Parse;
+import com.parse.PushService;
+
 public class YoinActivity extends Activity {
 	private String jsonString;
 
@@ -18,6 +21,9 @@ public class YoinActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		Parse.initialize(this, "0wvSw382QmOSDfFfLY9cjEwzjdCD0BkdWn8bus6j", "dlOrxUpPqPVALHFkwq2ys5QdROp63SDAQim7BISU");
+		PushService.subscribe(this, "", YoinActivity.class);
 
 		jsonString = getJSONFromURL("http://yoinadegle.appspot.com/get_videos?order=view");
 		Log.e("123", jsonString);
