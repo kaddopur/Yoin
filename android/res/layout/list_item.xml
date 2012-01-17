@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="100.0px" >
+
+        <ImageView
+            android:id="@+id/youtube_img"
+            android:layout_width="120.0px"
+            android:layout_height="90.0px"
+            android:layout_marginBottom="10.0px"
+            android:layout_marginLeft="20.0px"
+            android:layout_marginRight="20.0px"
+            android:layout_marginTop="10.0px"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5.0px"
+            android:layout_toRightOf="@+id/youtube_img"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/uploader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/title"
+            android:layout_centerVertical="true"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/uploader"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5.0px"
+            android:text="TextView" />
+
+    </RelativeLayout>
+
+</LinearLayout>
