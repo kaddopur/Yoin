@@ -31,145 +31,144 @@ import sys
 class MainHandler(webapp.RequestHandler):
     def get(self):
 
-		template_values = {
-			'videos': Video.all().order('-date').fetch(10),
-			'status': self.request.get('status')
-			}
-		path = os.path.join(os.path.dirname(__file__), 'index.html')
-		self.response.out.write(template.render(path, template_values))
+        template_values = {
+            'videos': Video.all().order('-date').fetch(10),
+            'status': self.request.get('status')
+            }
+        path = os.path.join(os.path.dirname(__file__), 'index.html')
+        self.response.out.write(template.render(path, template_values))
 
 
 class InsertUrl(webapp.RequestHandler):
-	def get(self):
-	 	
-		video_url = self.request.get('video_url')
-		refresh = self.request.get('refresh')
-		
-		#refresh
-		if refresh == 'true':
-			self.refresh()
-			self.redirect('/')
-			return
-		
-		# find video_key
-		try:
-			target = video_url.index('watch?v=') + len('watch?v=')
-		except ValueError:
-			self.redirect('/?status=error')
-			return
+    def get(self):
+         
+        video_url = self.request.get('video_url')
+        refresh = self.request.get('refresh')
+        
+        #refresh
+        if refresh == 'true':
+            self.refresh()
+            self.redirect('/')
+            return
+        
+        # find video_key
+        try:
+            target = video_url.index('watch?v=') + len('watch?v=')
+        except ValueError:
+            self.redirect('/?status=error')
+            return
 
-		video_key = video_url[target: target+11]
-		self.response.out.write(video_key)
-		
-		target_video = Video.all().filter('vid =', video_key).get()		
-		if not target_video:
-	 		new_video = Video(vid=video_key)
-			new_video.title, new_video.uploader, new_video.view, new_video.since, status = self.fetch_data('http://www.youtube.com/watch?v=' + video_key)
+        video_key = video_url[target: target+11]
+        self.response.out.write(video_key)
+        
+        target_video = Video.all().filter('vid =', video_key).get()        
+        if not target_video:
+            new_video = Video(vid=video_key)
+            new_video.title, new_video.uploader, new_video.view, new_video.since, status = self.fetch_data('http://www.youtube.com/watch?v=' + video_key)
 
-			new_video.good = 0
-			new_video.bad = 0
-			new_video.put()
-			
-			self.redirect('/?status=ok')
-		else:
-			self.redirect('/?status=exist')
+            new_video.good = 0
+            new_video.bad = 0
+            new_video.put()
+            
+            self.redirect('/?status=ok')
+        else:
+            self.redirect('/?status=exist')
 
-	def refresh(self):
-		videos = Video.all().fetch(1000)
-		for v in videos:
-			v.title, v.upoader, v.view, v.since, status = self.fetch_data('http://www.youtube.com/watch?v=' + v.vid)
-			if status == 200:
-				v.put()
-			else:
-				v.delete()
-	
-	def fetch_data(self, url):
-		result = urlfetch.fetch(url)
-		if result.status_code == 200:
-			# find title
-		 	target = result.content.index('id="eow-title"') + len('id="eow-title"')
-			target = result.content.index('title="', target) + len('title="')
-			title = result.content[target: result.content.index('">', target)]
+    def refresh(self):
+        videos = Video.all().fetch(1000)
+        for v in videos:
+            v.title, v.upoader, v.view, v.since, status = self.fetch_data('http://www.youtube.com/watch?v=' + v.vid)
+            if status == 200:
+                v.put()
+            else:
+                v.delete()
+    
+    def fetch_data(self, url):
+        result = urlfetch.fetch(url)
+        if result.status_code == 200:
+            # find title
+            target = result.content.index('id="eow-title"') + len('id="eow-title"')
+            target = result.content.index('title="', target) + len('title="')
+            title = result.content[target: result.content.index('">', target)]
 
-			# find uploader
-			target = result.content.index('class="author"') + len('class="author"')
-			target = result.content.index('>', target) + len('>')
-			uploader = result.content[target: result.content.index('<', target)]
+            # find uploader
+            target = result.content.index('<a href="/user/') + len('<a href="/user/')
+            uploader = result.content[target: result.content.index('"', target)]
 
-			# find view
-			target = result.content.index('class="watch-view-count"') + len('class="watch-view-count"')
-			target = result.content.index('<strong>', target) + len('<strong>')
-			view = int(result.content[target: result.content.index('</strong>', target)].replace(',', ''))	
+            # find view
+            target = result.content.index('class="watch-view-count"') + len('class="watch-view-count"')
+            target = result.content.index('<strong>', target) + len('<strong>')
+            view = int(result.content[target: result.content.index('</strong>', target)].replace(',', ''))    
 
-			# find since
-			month = {'Jan': 1,
-		 			 'Feb': 2,
-					 'Mar': 3,
-					 'Apr': 4,
-					 'May': 5,
-					 'Jun': 6,
-					 'Jul': 7,
-					 'Aug': 8,
-					 'Sep': 9,
-					 'Oct': 10,
-					 'Nov': 11,
-					 'Dec': 12}
-			target = result.content.index('id="eow-date"') + len('id="eow-date"')
-			target = result.content.index('>', target) + len('>')
-			#for taiwan
-			since_str = result.content[target: result.content.index('</span>', target)]
-			try:
-				since_str.index('-')
-				since_str = since_str.split('-')
-				since =  datetime.date(*[int(s) for s in since_str])
-			except ValueError:
-				since_str = since_str.split(' ')
-		 		since =  datetime.date(int(since_str[2]), month[since_str[0]], int(since_str[1][:-1]))
-	
-			return title, uploader, view, since, result.status_code
+            # find since
+            month = {'Jan': 1,
+                      'Feb': 2,
+                     'Mar': 3,
+                     'Apr': 4,
+                     'May': 5,
+                     'Jun': 6,
+                     'Jul': 7,
+                     'Aug': 8,
+                     'Sep': 9,
+                     'Oct': 10,
+                     'Nov': 11,
+                     'Dec': 12}
+            target = result.content.index('id="eow-date"') + len('id="eow-date"')
+            target = result.content.index('>', target) + len('>')
+            #for taiwan
+            since_str = result.content[target: result.content.index('</span>', target)]
+            try:
+                since_str.index('-')
+                since_str = since_str.split('-')
+                since =  datetime.date(*[int(s) for s in since_str])
+            except ValueError:
+                since_str = since_str.split(' ')
+                since =  datetime.date(int(since_str[2]), month[since_str[0]], int(since_str[1][:-1]))
+    
+            return title, uploader, view, since, result.status_code
 
 class GetVideos(webapp.RequestHandler):
-	def get(self):
-		videos = Video.all().fetch(10)
-		order = self.request.get('order')
-		offset = self.request.get('offset')
-		amount = self.request.get('amount')
+    def get(self):
+        videos = Video.all().fetch(10)
+        order = self.request.get('order')
+        offset = self.request.get('offset')
+        amount = self.request.get('amount')
 
-		if not order:
-			order = 'since'
-		if not offset:
-			offset = 0
-		if not amount:
-			amount = 20
-		
-		videos = Video.all().order('-'+order).fetch(int(amount), int(offset))
+        if not order:
+            order = 'since'
+        if not offset:
+            offset = 0
+        if not amount:
+            amount = 20
+        
+        videos = Video.all().order('-'+order).fetch(int(amount), int(offset))
 
 
-		video_out = [{'vid': v.vid, 
-			          'title': v.title,
-					  'uploader': v.uploader,
-					  'view': v.view,
-					  'since': str(v.since),
-					  'good': v.good,
-					  'bad': v.bad} for v in videos]
-		self.response.headers['Content-Type'] = "text"
-		self.response.out.write(simplejson.dumps(video_out))
+        video_out = [{'vid': v.vid, 
+                      'title': v.title,
+                      'uploader': v.uploader,
+                      'view': v.view,
+                      'since': str(v.since),
+                      'good': v.good,
+                      'bad': v.bad} for v in videos]
+        self.response.headers['Content-Type'] = "text"
+        self.response.out.write(simplejson.dumps(video_out))
 
 
 def main():
-	code = sys.getdefaultencoding()
-	if code != 'utf8':
-		reload(sys)
-		sys.setdefaultencoding('utf8')
-		
-	application = webapp.WSGIApplication([('/', MainHandler),
-										  ('/insert_url', InsertUrl),
-										  ('/get_videos', GetVideos)],
+    code = sys.getdefaultencoding()
+    if code != 'utf8':
+        reload(sys)
+        sys.setdefaultencoding('utf8')
+        
+    application = webapp.WSGIApplication([('/', MainHandler),
+                                          ('/insert_url', InsertUrl),
+                                          ('/get_videos', GetVideos)],
                                          debug=True)
 
-	#/refresh videos
+    #/refresh videos
 
- 	util.run_wsgi_app(application)
+    util.run_wsgi_app(application)
 
 
 if __name__ == '__main__':
