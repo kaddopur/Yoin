@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh_TW">
+<html lang="en">
   <head>
     <meta charset="utf-8">
-	<title>yoin, from Adegleyoyos</title>
-	<script src="jyoutube.js"></script>
+    <title>yoin, from Adegleyoyos!</title>
     <meta name="description" content="">
-    <meta name="author" content="Jason C. Huang">
+    <meta name="author" content="">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <!-- Le javascript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="script/bootstrap-modal.js"></script>
+    <script src="script/bootstrap-alerts.js"></script>
+
     <!-- Le styles -->
-    <link type="text/css" rel="stylesheet" href="/style/bootstrap.min.css">
+    <link href="style/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       /* Override some defaults */
       html, body {
@@ -67,85 +71,111 @@
 
     </style>
 
+
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="images/favicon.ico">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/ico/bootstrap-apple-57x57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/ico/bootstrap-apple-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/ico/bootstrap-apple-114x114.png">
   </head>
 
-  <body>
+  <body id="bootstrap-js">
 
-     <div class="topbar">
+    <!-- Topbar
+    ================================================== -->
+    <div class="topbar" data-scrollspy="scrollspy" >
       <div class="fill">
-         <div class="container">
-          <a class="brand" href="#">yoin</a>
-          <ul class="nav">
-             <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+        <div class="container">
+          <h3><a href="#">yoin</a></h3>
+          <ul>
+            <li><a href="#overview">Videos</a></li>
           </ul>
         </div>
       </div>
     </div>
 
     <div class="container">
-
       <div class="content">
         <div class="page-header">
-			<h1>Video <small>upload awesome yoyo videos here</small></h1>
-	    </div>
-
+          <h1>Videos <small>Upload awesome videos here!</small></h1>
+        </div>
+        
         <div class="row">
           <div class="span10">
-			<form action="/insert_url">
-              <input name="video_url" class="input-large" type="text" placeholder="URL">
-			  <button class="btn primary" type="submit">Upload</button>
-		    </form>
-			{% for v in videos %}
-			<div style="height:120px; clear:both;">
-			  <div style="width:20%; float:left;">
-				  <a href="http://www.youtube.com/watch?v={{v.vid}}"><img src="http://img.youtube.com/vi/{{v.vid}}/2.jpg"></a>
+            {% for v in videos %}
+            <div style="height:120px; clear:both;">
+              <div style="width:20%; float:left;">
+                <a href="http://www.youtube.com/watch?v={{v.vid}}"><img src="http://img.youtube.com/vi/{{v.vid}}/2.jpg"></a>
               </div>
-			  <div style="width:78%; float:right;">
-				<strong>{{v.title}}</strong><br>
-				{{v.uploader}}<br>
-				{{v.since}}<br>
-				{{v.view}}<br>
+
+              <div style="width:78%; float:right;">
+                <strong>{{v.title}}</strong><br>
+                {{v.uploader}}<br>
+                {{v.since}}<br>
+                {{v.view}}<br>
               </div>
             </div>
-			{% endfor %}  
+            {% endfor %}  
           </div>
-		  
-		  <div class="span4">
-			
-			  
-			{% ifequal status "ok" %}
-			<div class="alert-message success">
-				<p><strong>成功上傳影片連結</strong></p>
-			</div>
-			{% endifequal %}		
-			
-			{% ifequal status "exist" %}
-			<div class="alert-message warning">
-				<p><strong>該影片連結已存在</strong></p>
-			</div>
-			{% endifequal %}
+          
+          <div class="span4">
+            <!-- upload videos -->
+            <div id="modal-from-dom" class="modal hide fade">
+              <div class="modal-header">
+                <a href="#" class="close">&times;</a>
+                <h3>Your video</h3>
+              </div>
+              
+              <form action="/insert_url" id="myform">
+                <div class="modal-body">
+                    <input name="video_url" class="input-large" type="text" placeholder="YouTube URL">
+                </div>
+                
+                <div class="modal-footer">
+                  <button class="btn primary" type="submit">Upload</button>
+                  <button class="btn secondary danger" type="reset">Clear</button>
+                </div>
+              </form>
+            </div>
+            
+            <p>
+              <button data-controls-modal="modal-from-dom" data-backdrop="true" data-keyboard="true" class="btn primary">Upload</button>
+            </p>
+            
+            <!-- alert messages-->
+            {% ifequal status "ok" %}
+            <div class="alert-message success fade in" data-alert="alert" >
+              <a class="close" href="#">&times;</a>
+              <strong>成功上傳影片連結</strong>
+              <p>恭喜你</p>
+            </div>
+            {% endifequal %}		
 
-			{% ifequal status "error" %}
-			<div class="alert-message error">
-				<p><strong>錯誤的影片連結</strong></p>
-			</div>
-			{% endifequal %}
-		  </div>
-		</div>
+            {% ifequal status "exist" %}
+            <div class="alert-message warning fade in" data-alert="alert" >
+              <a class="close" href="#">&times;</a>
+              <strong>該影片連結已存在</strong>
+              <p>請重新上載其他影片</p>
+            </div>
+            {% endifequal %}
+
+            {% ifequal status "error" %}
+            <div class="alert-message error fade in" data-alert="alert" >
+              <a class="close" href="#">&times;</a>
+              <strong>錯誤的影片連結</strong>
+              <p>請重新檢查連結來源</p>
+            </div>
+            {% endifequal %}
+          </div>
+        </div>
       </div>
-		
+
       <footer>
-        <p>&copy; Adegle 2011</p>
+        <p>&copy; Adegleyoyos 2012</p>
       </footer>
+
     </div> <!-- /container -->
 
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
   </body>
 </html>
-
