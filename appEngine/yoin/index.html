@@ -82,70 +82,69 @@
           <a class="brand" href="#">yoin</a>
           <ul class="nav">
              <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
           </ul>
         </div>
       </div>
     </div>
 
     <div class="container">
-
       <div class="content">
         <div class="page-header">
-			<h1>Video <small>upload awesome yoyo videos here</small></h1>
-	    </div>
+          <h1>Video <small>upload awesome yoyo videos here</small></h1>
+        </div>
 
         <div class="row">
           <div class="span10">
-			<form action="/insert_url">
+            <form action="/insert_url">
               <input name="video_url" class="input-large" type="text" placeholder="URL">
-			  <button class="btn primary" type="submit">Upload</button>
-		    </form>
-			{% for v in videos %}
-			<div style="height:120px; clear:both;">
-			  <div style="width:20%; float:left;">
-				  <a href="http://www.youtube.com/watch?v={{v.vid}}"><img src="http://img.youtube.com/vi/{{v.vid}}/2.jpg"></a>
+              <button class="btn primary" type="submit">Upload</button>
+            </form>
+            
+            {% for v in videos %}
+            <div style="height:120px; clear:both;">
+              <div style="width:20%; float:left;">
+                <a href="http://www.youtube.com/watch?v={{v.vid}}"><img src="http://img.youtube.com/vi/{{v.vid}}/2.jpg"></a>
               </div>
-			  <div style="width:78%; float:right;">
-				<strong>{{v.title}}</strong><br>
-				{{v.uploader}}<br>
-				{{v.since}}<br>
-				{{v.view}}<br>
+
+              <div style="width:78%; float:right;">
+                <strong>{{v.title}}</strong><br>
+                {{v.uploader}}<br>
+                {{v.since}}<br>
+                {{v.view}}<br>
               </div>
             </div>
-			{% endfor %}  
+            {% endfor %}  
           </div>
-		  
-		  <div class="span4">
-			
-			  
-			{% ifequal status "ok" %}
-			<div class="alert-message success">
-				<p><strong>成功上傳影片連結</strong></p>
-			</div>
-			{% endifequal %}		
-			
-			{% ifequal status "exist" %}
-			<div class="alert-message warning">
-				<p><strong>該影片連結已存在</strong></p>
-			</div>
-			{% endifequal %}
+          
+          <div class="span4"> 
+            {% ifequal status "ok" %}
+            <div class="alert-message success">
+              <p><strong>成功上傳影片連結</strong></p>
+            </div>
+            {% endifequal %}		
 
-			{% ifequal status "error" %}
-			<div class="alert-message error">
-				<p><strong>錯誤的影片連結</strong></p>
-			</div>
-			{% endifequal %}
-		  </div>
-		</div>
+            {% ifequal status "exist" %}
+            <div class="alert-message warning">
+              <p><strong>該影片連結已存在</strong></p>
+            </div>
+            {% endifequal %}
+
+            {% ifequal status "error" %}
+            <div class="alert-message error">
+              <p><strong>錯誤的影片連結</strong></p>
+            </div>
+          {% endifequal %}
+          </div>
+        </div>
       </div>
 		
       <footer>
-        <p>&copy; Adegle 2011</p>
+        <p>&copy; Adegle 2012</p>
       </footer>
     </div> <!-- /container -->
-
+    
+    <!-- LiveReload -->
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
   </body>
 </html>
 
