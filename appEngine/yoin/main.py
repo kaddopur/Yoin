@@ -119,7 +119,7 @@ class GetVideos(webapp.RequestHandler):
         amount = self.request.get('amount')
 
         if not order:
-            order = 'since'
+            order = '-date'
         if not offset:
             offset = 0
         if not amount:
