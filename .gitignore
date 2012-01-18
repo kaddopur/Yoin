@@ -1,4 +1,4 @@
 *.class
 *.pyc
-android/bin/*
+android/bin*
 android/gen/*
