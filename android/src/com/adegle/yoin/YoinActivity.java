@@ -44,8 +44,7 @@ public class YoinActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		Parse.initialize(this, "0wvSw382QmOSDfFfLY9cjEwzjdCD0BkdWn8bus6j",
-				"dlOrxUpPqPVALHFkwq2ys5QdROp63SDAQim7BISU");
+		Parse.initialize(this, "0wvSw382QmOSDfFfLY9cjEwzjdCD0BkdWn8bus6j", "dlOrxUpPqPVALHFkwq2ys5QdROp63SDAQim7BISU");
 		PushService.subscribe(this, "", YoinActivity.class, R.drawable.noticon);
 
 		findViews();
@@ -54,14 +53,9 @@ public class YoinActivity extends Activity {
 	}
 
 	private void setListeners() {
-		SimpleAdapter adapter = new SimpleAdapter(this, getData(),
-				R.layout.list_item, new String[] { "youtube_img", "title",
-						"uploader", "view" }, new int[] { R.id.youtube_img,
-						R.id.title, R.id.uploader, R.id.view });
+		SimpleAdapter adapter = new SimpleAdapter(this, getData(), R.layout.list_item, new String[] { "youtube_img", "title", "uploader", "view" }, new int[] { R.id.youtube_img, R.id.title, R.id.uploader, R.id.view });
 		adapter.setViewBinder(new ViewBinder() {
-			public boolean setViewValue(View view, Object data,
-					String textRepresentation) 
-			{
+			public boolean setViewValue(View view, Object data, String textRepresentation) {
 				if (view instanceof ImageView && data instanceof Bitmap) {
 					ImageView iv = (ImageView) view;
 					iv.setImageBitmap((Bitmap) data);
@@ -72,10 +66,8 @@ public class YoinActivity extends Activity {
 		});
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> a, View v, int position,
-					long id) {
-				Uri uri = Uri.parse("http://www.youtube.com/v/"
-						+ arrayList.get(position).get("vid"));
+			public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+				Uri uri = Uri.parse("http://www.youtube.com/v/" + arrayList.get(position).get("vid"));
 				Intent it = new Intent(Intent.ACTION_VIEW, uri);
 				startActivity(it);
 			}
@@ -87,14 +79,14 @@ public class YoinActivity extends Activity {
 	}
 
 	private ArrayList<HashMap<String, Object>> getData() {
-		jsonString = getJSONFromURL("http://yoinadegle.appspot.com/get_videos?order=view");
+		jsonString = getJSONFromURL("http://yoinadegle.appspot.com/get_videos");
 		try {
 			JSONArray array = new JSONArray(jsonString);
 			for (int i = 0; i < array.length(); i++) {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				JSONObject obj = array.getJSONObject(i);
 				try {
-					URL url = new URL("http://img.youtube.com/vi/"+obj.getString("vid") +"/2.jpg");
+					URL url = new URL("http://img.youtube.com/vi/" + obj.getString("vid") + "/2.jpg");
 					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 					InputStream is = conn.getInputStream();
 					bitmap = BitmapFactory.decodeStream(is);
@@ -104,7 +96,7 @@ public class YoinActivity extends Activity {
 					map.put("view", obj.getString("view"));// 觀看人數
 					map.put("vid", obj.getString("vid"));
 					arrayList.add(map);
-					
+
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -118,19 +110,17 @@ public class YoinActivity extends Activity {
 		}
 		return arrayList;
 	}
-	private String getJSONFromURL(String string) {
+
+	private String getJSONFromURL(String url_string) {
 		String responseString = "";
 		try {
-			URL url = new URL(
-					"http://yoinadegle.appspot.com/get_videos?order=view");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					url.openStream()));
+			URL url = new URL(url_string);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 			responseString = reader.readLine();
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-			Toast.makeText(this, "MalformedURLException", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "MalformedURLException", Toast.LENGTH_SHORT).show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			Toast.makeText(this, "IOException", Toast.LENGTH_SHORT).show();
