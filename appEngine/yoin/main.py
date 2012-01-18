@@ -28,6 +28,9 @@ import simplejson
 from dbmodel import *
 import sys
 import urllib2
+import gdata.youtube
+import gdata.youtube.service
+
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -66,7 +69,7 @@ class InsertUrl(webapp.RequestHandler):
         target_video = Video.all().filter('vid =', video_key).get()        
         if not target_video:
             new_video = Video(vid=video_key)
-            new_video.title, new_video.uploader, new_video.view, new_video.since, status = self.fetch_data('http://www.youtube.com/watch?v=' + video_key)
+            new_video.title, new_video.uploader, new_video.view, new_video.since, status = self.fetch_data(video_key)
 
             new_video.good = 0
             new_video.bad = 0
@@ -96,55 +99,16 @@ class InsertUrl(webapp.RequestHandler):
     def refresh(self):
         videos = Video.all().fetch(1000)
         for v in videos:
-            v.title, v.upoader, v.view, v.since, status = self.fetch_data('http://www.youtube.com/watch?v=' + v.vid)
+            v.title, v.upoader, v.view, v.since, status = self.fetch_data(v.vid)
             if status == 200:
                 v.put()
             else:
                 v.delete()
     
-    def fetch_data(self, url):
-        result = urlfetch.fetch(url)
-        if result.status_code == 200:
-            # find title
-            target = result.content.index('id="eow-title"') + len('id="eow-title"')
-            target = result.content.index('title="', target) + len('title="')
-            title = result.content[target: result.content.index('">', target)]
-
-            # find uploader
-            target = result.content.index('<a href="/user/') + len('<a href="/user/')
-            uploader = result.content[target: result.content.index('"', target)]
-
-            # find view
-            target = result.content.index('class="watch-view-count"') + len('class="watch-view-count"')
-            target = result.content.index('<strong>', target) + len('<strong>')
-            view = int(result.content[target: result.content.index('</strong>', target)].replace(',', ''))    
-
-            # find since
-            month = {'Jan': 1,
-                      'Feb': 2,
-                     'Mar': 3,
-                     'Apr': 4,
-                     'May': 5,
-                     'Jun': 6,
-                     'Jul': 7,
-                     'Aug': 8,
-                     'Sep': 9,
-                     'Oct': 10,
-                     'Nov': 11,
-                     'Dec': 12}
-            target = result.content.index('id="eow-date"') + len('id="eow-date"')
-            target = result.content.index('>', target) + len('>')
-            #for taiwan
-            since_str = result.content[target: result.content.index('</span>', target)]
-            try:
-                since_str.index('-')
-                since_str = since_str.split('-')
-                since =  datetime.date(*[int(s) for s in since_str])
-            except ValueError:
-                since_str = since_str.split(' ')
-                since =  datetime.date(int(since_str[2]), month[since_str[0]], int(since_str[1][:-1]))
-    
-            return title, uploader, view, since, result.status_code
+    def fetch_data(self, vid):
+        client = gdata.youtube.service.YouTubeService()
+        feed = client.GetYouTubeVideoEntry(video_id=vid)
+        return feed.title.text, feed.author[0].name.text, int(feed.statistics.view_count), datetime.date(*[int(i) for i in feed.published.text[:10].split('-')]), 200
             
 
 class GetVideos(webapp.RequestHandler):
