@@ -12,7 +12,7 @@
     <![endif]-->
 
     <!-- Le javascript -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="script/jquery.min.js"></script>
     <script src="script/bootstrap-modal.js"></script>
     <script src="script/bootstrap-alerts.js"></script>
 
@@ -88,7 +88,7 @@
         <div class="container">
           <h3><a href="#">yoin</a></h3>
           <ul>
-            <li><a href="#overview">Videos</a></li>
+            <li><a href="#">Videos</a></li>
           </ul>
         </div>
       </div>
@@ -113,6 +113,7 @@
                 {{v.uploader}}<br>
                 {{v.since}}<br>
                 {{v.view}}<br>
+                {{v.tag}}<br>
               </div>
             </div>
             {% endfor %}  
@@ -128,7 +129,8 @@
               
               <form action="/insert_url" id="myform">
                 <div class="modal-body">
-                    <input name="video_url" class="input-large" type="text" placeholder="YouTube URL">
+                    <p><input id="video_url" name="video_url" class="input-large" type="text" placeholder="YouTube URL">
+                    <p><textarea class="xlarge" id="video_tag" name="video_tag" rows="3" style="width: 98%;" placeholder="Video tags"></textarea>
                 </div>
                 
                 <div class="modal-footer">

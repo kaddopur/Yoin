@@ -34,6 +34,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.parse.Parse;
+import com.parse.PushService;
+
 public class YoinActivity extends Activity {
 	private String jsonString;
 
@@ -50,6 +53,9 @@ public class YoinActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		Parse.initialize(this, "0wvSw382QmOSDfFfLY9cjEwzjdCD0BkdWn8bus6j", "dlOrxUpPqPVALHFkwq2ys5QdROp63SDAQim7BISU");
+		PushService.subscribe(this, "", YoinActivity.class, R.drawable.noticon);
 
 		listView = (ListView) findViewById(R.id.listView1);
 		img01 = (ImageView) findViewById(R.id.youtube_img);
