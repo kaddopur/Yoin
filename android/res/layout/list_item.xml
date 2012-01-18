@@ -16,15 +16,18 @@
             android:layout_marginBottom="10.0px"
             android:layout_marginLeft="20.0px"
             android:layout_marginRight="20.0px"
-            android:layout_marginTop="10.0px"/>
+            android:layout_marginTop="10.0px" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginTop="5.0px"
             android:layout_toRightOf="@+id/youtube_img"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
             android:text="TextView" />
 
         <TextView
@@ -43,7 +46,6 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="5.0px"
             android:text="TextView" />
-
     </RelativeLayout>
 
 </LinearLayout>
